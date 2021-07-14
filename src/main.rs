@@ -2,24 +2,28 @@ mod utils;
 use utils::*;
 use std::io;
 use std::{fs, env, path, process};
+use home;
 
 fn move_files() -> Result<(), io::Error> {
     let current_dir = env::current_dir()?;
-    if current_dir == "/home/" {
+    if current_dir == home::home_dir().unwrap() {
         println!("Cannot stash in this directory");
         process::exit(0);
     }
-    for entry in fs::read_dir(current_dir)? {
-        let entry = entry?;
-        let path = entry.path();
-        let f_name =  path::Path::new(&path).file_name().unwrap().to_str().unwrap();
 
-        let metadata = fs::metadata(&path)?;
+    else {
+        for entry in fs::read_dir(current_dir)? {
+            let entry = entry?;
+            let path = entry.path();
+            let f_name =  path::Path::new(&path).file_name().unwrap().to_str().unwrap();
 
-        if  !f_name.starts_with("stashit") {
-            println!("Moved: {}", f_name);
-            //fs::rename(f_name, get_folder_name()+"/"+f_name);
+            let metadata = fs::metadata(&path)?;
 
+            if  !f_name.starts_with("stashit") {
+                println!("Moved: {}", f_name);
+                fs::rename(f_name, get_folder_name()+"/"+f_name);
+
+            }
         }
     }
     Ok(())
