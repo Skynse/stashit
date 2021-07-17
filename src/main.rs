@@ -30,7 +30,7 @@ fn move_files() -> Result<(), io::Error> {
 
 }
 fn main()   {
-    if !path::Path::new(&get_date()).exists() {
+    if !path::Path::new(&("stashit-".to_string()+get_date().as_str())).exists() {
         create_folder();
         move_files();
     }
