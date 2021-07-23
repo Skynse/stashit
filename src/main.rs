@@ -17,8 +17,6 @@ fn move_files() -> Result<(), io::Error> {
             let path = entry.path();
             let f_name =  path::Path::new(&path).file_name().unwrap().to_str().unwrap();
 
-            let metadata = fs::metadata(&path)?;
-
             if  !f_name.starts_with("stashit") {
                 println!("Moved: {}", f_name);
                 fs::rename(f_name, get_folder_name()+"/"+f_name);
@@ -37,6 +35,5 @@ fn main()   {
     else {
         move_files();
     }
-    
 }
 
