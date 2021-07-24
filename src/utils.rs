@@ -1,16 +1,20 @@
-use chrono::{Utc, Datelike};
-use std::{fs};
+use chrono::{Datelike, Utc};
+use std::fs;
 
-pub fn get_date() -> String{
+pub fn get_date() -> String {
     let now = Utc::now();
-    let date : String = format!("{year}-{month}-{day}", 
-                                year=now.year(), month=now.month(), day=now.day());
+    let date: String = format!(
+        "{year}-{month}-{day}",
+        year = now.year(),
+        month = now.month(),
+        day = now.day()
+    );
 
-    return date;
+    date
 }
 
 pub fn get_folder_name() -> String {
-    "stashit-".to_string()+get_date().as_str()
+    "stashit-".to_string() + get_date().as_str()
 }
 
 pub fn create_folder() {
