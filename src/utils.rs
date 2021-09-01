@@ -9,14 +9,17 @@ pub fn get_date() -> String {
         month = now.month(),
         day = now.day()
     );
-
     date
 }
-
-pub fn get_folder_name() -> String {
+pub fn get_folder_name(name: String) -> String {
+    if !name.is_empty() {
+        name
+    }
+    else {
     "stashit-".to_string() + get_date().as_str()
 }
+}
 
-pub fn create_folder() {
-    fs::create_dir(get_folder_name());
+pub fn create_folder(name: String) {
+    fs::create_dir(get_folder_name(name));
 }
