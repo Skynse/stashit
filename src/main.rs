@@ -1,62 +1,44 @@
 mod utils;
-use home;
-use std::io;
-use std::{env, fs, path, process};
+use std::{path};
 use utils::*;
+use clap::{Arg, App};
 
-fn get_args() -> String {
-    let flags: Vec<String> = env::args().collect();
-    println!("{:?}", flags[1].to_owned().to_string());
-    if flags.len() == 1 {
-        String::from("stashit")
-    }
-    else {
-    flags[1].to_owned().to_string()
-}
-}
-
-fn move_files() -> Result<(), io::Error> {
-    let current_dir = env::current_dir()?;
-    if current_dir == home::home_dir().unwrap() {
-        println!("Cannot stash in this directory");
-        process::exit(0);
-    } else {
-        for entry in fs::read_dir(current_dir)? {
-            let entry = match entry {
-                Ok(entry) => entry,
-                Err(e) => return Err(e),
-            };
-
-            let path = entry.path();
-            let f_name = path::Path::new(&path)
-                .file_name()
-                .unwrap()
-                .to_str()
-                .unwrap();
-
-            if !f_name.starts_with("stashit") {
-                println!("Moved: \x1b[0;32m{}\x1b[0m", f_name);
-                fs::rename(f_name, get_folder_name(get_args()) + "/" + f_name);
-            }
-        }
-    }
-    Ok(())
+fn path_exists(path_name: &str) -> bool {
+    path::Path::new(&get_folder_name(path_name)).exists()
 }
 fn main() {
+    let app = App::new("Stashit")
+    .about("Mass file mover")
+    .author("Skynse")
+    .version("0.2.0")
+    .arg(Arg::with_name("name") 
+        .value_name("name")
+        .takes_value(true)
+        .required(false)
+        .help("name of the folder to move files to")
+        .short("n"))
+    .get_matches();
 
-    if get_args() != "stashit" {
-        if !path::Path::new(&get_folder_name(get_args())).exists() {
-                create_folder(get_args());
-                move_files();
-            }
+    if app.is_present("name") {
+        //Check if name argument used, if not, use the default stashit datetime folder
+        let arg = String::from(app.value_of("name").unwrap());
+        if !path_exists(arg.as_str()) {
+            create_folder(arg.as_str());
+            move_files(arg.as_str()).unwrap_or_default();
         }
+        else {
+            //If the folder with the argument name already exists, just move files to it
+            move_files(arg.as_str()).unwrap_or_default();
+        }
+    }
+    
+    else if !path_exists(&get_folder_name("")) {
+        //check if a stashit folder exists
+            create_folder("");
+            move_files(&get_folder_name("")).unwrap_or_default();
+    }
 
     else {
-    if !path::Path::new(&get_folder_name(String::from(""))).exists() {
-        create_folder(get_args());
-        move_files();
-    } else {
-        move_files();
+        move_files(&get_folder_name("")).unwrap_or_default();
     }
-}
-}
+} 
