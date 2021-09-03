@@ -1,6 +1,7 @@
 use chrono::{Datelike, Utc};
 use std::io;
 use std::{env, fs, path, process};
+use std::cfg;
 
 pub fn get_date() -> String {
     let now = Utc::now();
@@ -46,7 +47,20 @@ pub fn move_files(name: &str) -> Result<(), io::Error> {
                 .unwrap();
 
             if !f_name.starts_with(name) {
-                println!("Moved ➟ \x1b[0;32m{}\x1b[0m", f_name);
+                #[cfg(target_os = "linux")] 
+                {
+                    println!("Moved ➟ \x1b[0;32m{}\x1b[0m", f_name);
+                }
+                
+                #[cfg(target_os = "macos")] 
+                {
+                    println!("Moved ➟ \x1b[0;32m{}\x1b[0m", f_name);
+                }
+
+                #[cfg(target_os = "windows")]
+                {
+                    println!("Moved -> {}", f_name);
+                }
                 fs::rename(f_name, get_folder_name(name) + "/" + f_name).unwrap_or(());
             }
         }
