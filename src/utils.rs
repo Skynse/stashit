@@ -26,8 +26,8 @@ pub fn create_folder(name: &str) {
 }
 
 pub fn move_files(name: &str) -> Result<(), io::Error> {
-    let current_dir = env::current_dir()?;
     let mut counter: i32 = 0;
+    let current_dir = env::current_dir()?;
     if current_dir == home::home_dir().unwrap() {
         println!("Cannot stash in this directory");
         process::exit(0);
@@ -46,7 +46,7 @@ pub fn move_files(name: &str) -> Result<(), io::Error> {
                 .to_str()
                 .unwrap();
 
-            if !f_name.starts_with(name) {
+            if !f_name.starts_with(name) && !f_name.starts_with("stashit") {
                 #[cfg(target_os = "linux")] 
                 {
                     println!("Moved ➟ \x1b[0;32m{}\x1b[0m", f_name);

@@ -31,14 +31,18 @@ fn main() {
             move_files(arg.as_str()).unwrap_or_default();
         }
     }
+    //if a name is not specified, just create a standard stashit folder
     
-    else if !path_exists(&get_folder_name("")) {
-        //check if a stashit folder exists
+    else  {
+        if !path_exists(&get_folder_name("")) {
+        //check if a stashit folder for the current date exists
             create_folder("");
             move_files(&get_folder_name("")).unwrap_or_default();
     }
-
+    
     else {
         move_files(&get_folder_name("")).unwrap_or_default();
     }
+
+}
 } 
