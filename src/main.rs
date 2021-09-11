@@ -1,12 +1,16 @@
 mod utils;
+mod logs;
 use std::{path};
 use utils::*;
+use logs::*;
 use clap::{Arg, App};
 
 fn path_exists(path_name: &str) -> bool {
     path::Path::new(&get_folder_name(path_name)).exists()
 }
 fn main() {
+    let default_folder_name = get_folder_name("");
+
     let app = App::new("Stashit")
     .about("Mass file mover")
     .author("Skynse")
@@ -34,14 +38,14 @@ fn main() {
     //if a name is not specified, just create a standard stashit folder
     
     else  {
-        if !path_exists(&get_folder_name("")) {
+        if !path_exists(&default_folder_name) {
         //check if a stashit folder for the current date exists
             create_folder("");
-            move_files(&get_folder_name("")).unwrap_or_default();
+            move_files(&default_folder_name).unwrap_or_default();
     }
     
     else {
-        move_files(&get_folder_name("")).unwrap_or_default();
+        move_files(&default_folder_name).unwrap_or_default();
     }
 
 }

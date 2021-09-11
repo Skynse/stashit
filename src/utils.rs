@@ -2,6 +2,7 @@ use chrono::{Datelike, Utc};
 use std::io;
 use std::{env, fs, path, process};
 use std::cfg;
+use crate::logs::*;
 
 pub fn get_date() -> String {
     let now = Utc::now();
@@ -22,10 +23,13 @@ pub fn get_folder_name(name: &str) -> String {
 }
 
 pub fn create_folder(name: &str) {
+    make_logs();
+    write_logs(&get_folder_name(name));
     fs::create_dir(get_folder_name(name)).unwrap_or(());
 }
 
 pub fn move_files(name: &str) -> Result<(), io::Error> {
+    let log = read_logs();
     let mut counter: i32 = 0;
     let current_dir = env::current_dir()?;
     if current_dir == home::home_dir().unwrap() {
@@ -45,8 +49,9 @@ pub fn move_files(name: &str) -> Result<(), io::Error> {
                 .unwrap()
                 .to_str()
                 .unwrap();
-
-            if !f_name.starts_with(name) && !f_name.starts_with("stashit") {
+            
+            println!("{:?}", log);
+            if !log.contains(&f_name.to_string()) {
                 #[cfg(target_os = "linux")] 
                 {
                     println!("Moved ➟ \x1b[0;32m{}\x1b[0m", f_name);
