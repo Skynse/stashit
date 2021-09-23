@@ -13,15 +13,7 @@ jobs:
         - build: macos
           os: macos-latest
           rust: stable
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: ${{ matrix.target }}
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --release --target=${{ matrix.target }}
+    - name: Install Rust
+      run: rustup install ${{ matrix.rust }}
+    - name: Build
+      run: cargo build --release
