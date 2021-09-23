@@ -4,17 +4,16 @@ name: Cross-compile
 
 jobs:
   build:
-    name: Build
+    name: Build Linux
     runs-on: ubuntu-latest
     strategy:
       matrix:
         target:
           - x86_64-unknown-linux-gnu
-          - x86_64-pc-windows-msvc
-          - aarch64-unknown-linux-gnu
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
+      - uses: actions/create-release@v1
         with:
           toolchain: stable
           target: ${{ matrix.target }}
@@ -24,3 +23,15 @@ jobs:
           use-cross: true
           command: build
           args: --release --target=${{ matrix.target }}
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
