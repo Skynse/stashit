@@ -1,5 +1,0 @@
-[toolchain]
-channel = "rustup default"
-components = [ "rustfmt", "rustc-dev" ]
-targets = [ "x86_64-unknown-linux-gnu" ]
-profile = "minimal"
